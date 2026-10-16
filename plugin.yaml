@@ -52,6 +52,11 @@ config_schema:
     default: "~/.hermes/custom-voice-keys.yaml"
     label: "Keys YAML File"
     description: "Path to multi-key YAML file for direct rotation (bypasses 9Router)"
+  key_status_overview:
+    type: str
+    default: "5/5 Gemini keys active (3.8-lite), 3/3 Groq keys active"
+    label: "Active Keys Status"
+    description: "Status snapshot. Run /voice-status in chat for a live per-key probe table."
   gateway_url:
     type: str
     default: ""

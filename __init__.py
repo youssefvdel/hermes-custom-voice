@@ -498,6 +498,63 @@ class CustomTranscriptionProvider(TranscriptionProvider):
 
 
 # ---------------------------------------------------------------------------
+# Status Probe & Diagnostics
+# ---------------------------------------------------------------------------
+
+
+def probe_keys_status(raw_args: str = "") -> str:
+    gem, groq = _load_keys()
+    lines = ["### Custom Voice API Quota & Health Status\n"]
+    lines.append("| Provider | Account | Model | Status |")
+    lines.append("| :--- | :--- | :--- | :--- |")
+
+    import requests
+
+    tts_m = str(_get_setting("tts_model") or gem.get("tts_model") or _GEMINI_DEFAULT_MODEL)
+    for item in gem.get("keys", []):
+        name = item.get("name", "unnamed")
+        k = item.get("key", "")
+        url = _GEMINI_TTS_URL.format(model=tts_m, key=k)
+        body = {
+            "contents": [{"parts": [{"text": "ping"}]}],
+            "generationConfig": {
+                "responseModalities": ["AUDIO"],
+                "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": "Autonoe"}}},
+            },
+        }
+        try:
+            r = requests.post(url, json=body, timeout=8)
+            if r.status_code == 200:
+                st = "🟢 Active (Healthy)"
+            elif r.status_code == 429:
+                st = "🔴 Quota Exceeded (429)"
+            else:
+                st = f"🟡 HTTP {r.status_code}"
+        except Exception as e:
+            st = f"⚠️ Error ({str(e)[:25]})"
+        lines.append(f"| Gemini (TTS) | `{name}` | `{tts_m}` | {st} |")
+
+    stt_m = str(_get_setting("stt_model") or groq.get("stt_model") or "whisper-large-v3")
+    for item in groq.get("keys", []):
+        name = item.get("name", "unnamed")
+        k = item.get("key", "")
+        url = "https://api.groq.com/openai/v1/models"
+        try:
+            r = requests.get(url, headers={"Authorization": f"Bearer {k}"}, timeout=8)
+            if r.status_code == 200:
+                st = "🟢 Active (Healthy)"
+            elif r.status_code == 429:
+                st = "🔴 Rate Limited (429)"
+            else:
+                st = f"🟡 HTTP {r.status_code}"
+        except Exception as e:
+            st = f"⚠️ Error ({str(e)[:25]})"
+        lines.append(f"| Groq (STT) | `{name}` | `{stt_m}` | {st} |")
+
+    return "\n".join(lines)
+
+
+# ---------------------------------------------------------------------------
 # Registration
 # ---------------------------------------------------------------------------
 
@@ -508,6 +565,11 @@ def register(ctx) -> None:
     _init_rings()
     ctx.register_tts_provider(CustomTTSProvider())
     ctx.register_transcription_provider(CustomTranscriptionProvider())
+    ctx.register_command(
+        "voice-status",
+        handler=probe_keys_status,
+        description="Probe live quota and health for all Gemini & Groq voice keys.",
+    )
     mode = "direct-keys" if (_GEMINI_RING or _GROQ_RING) else (
         f"gateway({_base_url()})" if _base_url() else "unconfigured"
     )
