@@ -1,0 +1,17 @@
+manifest_version: 1
+name: custom-voice
+version: 0.1.0
+description: "STT + TTS through any OpenAI-compatible speech endpoint (default: 9Router on the mini-server)."
+author: Suzan
+kind: standalone
+requires_hermes: ">=0.20.0"
+requires_env: []
+provides_tools: []
+provides_hooks: []
+provides_middleware: []
+license: MIT
+tags:
+  - speech
+  - tts
+  - stt
+  - voice
