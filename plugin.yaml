@@ -1,5 +1,5 @@
 name: custom-voice
-version: 0.2.0
+version: 0.2.1
 manifest_version: 2
 description: "STT + TTS through direct Google/Groq key rotation or any OpenAI-compatible speech endpoint."
 author: Suzan
@@ -9,9 +9,8 @@ tags: [speech, tts, stt, voice]
 config_schema:
   tts_model:
     type: str
-    default: "gemini-3.8-flash-lite-tts"
     label: "TTS Model"
-    description: "Gemini TTS model (direct mode) or endpoint model"
+    description: "Gemini TTS model or endpoint model"
     choices:
       - "gemini-3.8-flash-lite-tts"
       - "gemini-3.8-flash-tts"
@@ -19,9 +18,8 @@ config_schema:
       - "gemini-2.5-pro-preview-tts"
   tts_voice:
     type: str
-    default: "Autonoe"
     label: "TTS Voice"
-    description: "Voice name for Gemini speech generation"
+    description: "Voice name for speech generation"
     choices:
       - "Autonoe"
       - "Kore"
@@ -41,24 +39,20 @@ config_schema:
       - "Erinome"
   stt_model:
     type: str
-    default: "whisper-large-v3"
     label: "STT Model"
-    description: "Groq Whisper model for speech-to-text"
+    description: "Whisper model for speech-to-text"
     choices:
       - "whisper-large-v3"
       - "whisper-large-v3-turbo"
   keys_file:
     type: str
-    default: "~/.hermes/custom-voice-keys.yaml"
     label: "Keys YAML File"
-    description: "Path to multi-key YAML file for direct rotation (bypasses 9Router)"
+    description: "Path to multi-key YAML file for direct rotation"
   key_status_overview:
     type: str
-    default: "5/5 Gemini keys active (3.8-lite), 3/3 Groq keys active"
     label: "Active Keys Status"
     description: "Status snapshot. Run /voice-status in chat for a live per-key probe table."
   gateway_url:
     type: str
-    default: ""
     label: "Gateway URL (Optional)"
     description: "OpenAI-compatible speech endpoint URL if not using direct keys file"
