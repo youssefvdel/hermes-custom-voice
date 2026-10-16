@@ -1,17 +1,59 @@
-manifest_version: 1
 name: custom-voice
-version: 0.1.0
-description: "STT + TTS through any OpenAI-compatible speech endpoint (default: 9Router on the mini-server)."
+version: 0.2.0
+manifest_version: 2
+description: "STT + TTS through direct Google/Groq key rotation or any OpenAI-compatible speech endpoint."
 author: Suzan
-kind: standalone
-requires_hermes: ">=0.20.0"
-requires_env: []
-provides_tools: []
-provides_hooks: []
-provides_middleware: []
 license: MIT
-tags:
-  - speech
-  - tts
-  - stt
-  - voice
+tags: [speech, tts, stt, voice]
+
+config_schema:
+  tts_model:
+    type: str
+    default: "gemini-3.8-flash-lite-tts"
+    label: "TTS Model"
+    description: "Gemini TTS model (direct mode) or endpoint model"
+    choices:
+      - "gemini-3.8-flash-lite-tts"
+      - "gemini-3.8-flash-tts"
+      - "gemini-2.5-flash-preview-tts"
+      - "gemini-2.5-pro-preview-tts"
+  tts_voice:
+    type: str
+    default: "Autonoe"
+    label: "TTS Voice"
+    description: "Voice name for Gemini speech generation"
+    choices:
+      - "Autonoe"
+      - "Kore"
+      - "Puck"
+      - "Zephyr"
+      - "Fenrir"
+      - "Aoede"
+      - "Leda"
+      - "Callirrhoe"
+      - "Charon"
+      - "Orus"
+      - "Enceladus"
+      - "Iapetus"
+      - "Umbriel"
+      - "Algieba"
+      - "Despina"
+      - "Erinome"
+  stt_model:
+    type: str
+    default: "whisper-large-v3"
+    label: "STT Model"
+    description: "Groq Whisper model for speech-to-text"
+    choices:
+      - "whisper-large-v3"
+      - "whisper-large-v3-turbo"
+  keys_file:
+    type: str
+    default: "~/.hermes/custom-voice-keys.yaml"
+    label: "Keys YAML File"
+    description: "Path to multi-key YAML file for direct rotation (bypasses 9Router)"
+  gateway_url:
+    type: str
+    default: ""
+    label: "Gateway URL (Optional)"
+    description: "OpenAI-compatible speech endpoint URL if not using direct keys file"
