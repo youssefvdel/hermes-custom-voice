@@ -43,7 +43,7 @@ logger = logging.getLogger(__name__)
 __all__ = ["register"]
 
 NAME = "custom"
-_KEYS_FILE_DEFAULT = "~/.hermes/custom-voice-keys.yaml"
+_KEYS_FILE_DEFAULT = "~/.hermes/voice-keys.yaml"
 _GEMINI_TTS_URL = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
 _GROQ_STT_URL = "https://api.groq.com/openai/v1/audio/transcriptions"
 _COOLDOWN_SECONDS = 900  # 15 min after a 429/quota strike
